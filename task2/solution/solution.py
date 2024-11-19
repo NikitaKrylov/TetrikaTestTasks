@@ -4,7 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_start_page_content(url: str, items: defaultdict | None = None) -> defaultdict:
+def get_beasts_count(url: str, items: defaultdict | None = None) -> defaultdict:
+    """Рекурсивный сбор элементов"""
     if not items:
         items = defaultdict(int)
 
@@ -29,10 +30,11 @@ def get_start_page_content(url: str, items: defaultdict | None = None) -> defaul
         items[tag] += len(links)
     print(items)
 
-    return get_start_page_content(f'https://ru.wikipedia.org{url}', items=items)
+    return get_beasts_count(f'https://ru.wikipedia.org{url}', items=items)
 
 
 def write_file(items: dict, filename: str) -> None:
+    """Запись элементов словаря в файл по ключу и значению"""
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(['Буква алфавита', 'Количество'])
@@ -45,5 +47,6 @@ def write_file(items: dict, filename: str) -> None:
 
 
 def parce_beasts(filename: str = 'beasts.csv') -> None:
-    items = get_start_page_content(url='https://ru.wikipedia.org/wiki/Категория:Животные_по_алфавиту')
+    """Главная фцнкция вызова парсера"""
+    items = get_beasts_count(url='https://ru.wikipedia.org/wiki/Категория:Животные_по_алфавиту')
     write_file(items, filename)
